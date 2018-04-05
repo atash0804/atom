@@ -1,6 +1,6 @@
 package ru.atom.other;
 
-import ru.atom.gameController.GameController;
+import ru.atom.gamecontroller.GameController;
 
 import java.util.Date;
 

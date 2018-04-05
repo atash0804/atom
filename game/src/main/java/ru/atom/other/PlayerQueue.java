@@ -7,9 +7,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @Repository
 public class PlayerQueue {
-    static private BlockingQueue<Player> queue = new LinkedBlockingQueue<>();
+    private static BlockingQueue<Player> queue = new LinkedBlockingQueue<>();
 
-    static public BlockingQueue<Player> getQueue() {
+    public static BlockingQueue<Player> getQueue() {
         return queue;
     }
 }

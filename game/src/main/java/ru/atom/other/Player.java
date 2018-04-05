@@ -8,7 +8,7 @@ public class Player extends Thread {
     private Date connectTime;
     public long gameId;
 
-    public Player (String name, int rank) {
+    public Player(String name, int rank) {
         this.name = name;
         this.rank = rank;
         connectTime = new Date();
@@ -31,6 +31,7 @@ public class Player extends Thread {
         try {
             wait();
         } catch (InterruptedException e) {
+            return;
         }
     }
 }

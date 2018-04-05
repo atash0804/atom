@@ -5,20 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.HtmlUtils;
-import ru.atom.gameController.GameController;
 import ru.atom.other.Leaderboard;
 import ru.atom.other.Player;
 import ru.atom.other.PlayerQueue;
 import ru.atom.other.Selector;
-
-import java.util.TimerTask;
 
 @Controller
 @RequestMapping("matchmaker")
