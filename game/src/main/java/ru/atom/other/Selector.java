@@ -19,7 +19,7 @@ public class Selector extends Thread {
                     players = NUMBER_OF_PLAYERS;
                 } else {
                     if (PlayerQueue.getQueue().peek().getConnectTime().getTime() - curTime.getTime() > 10000) {
-                        players = Math.max(PlayerQueue.getQueue().size(), NUMBER_OF_PLAYERS);
+                        players = Math.min(PlayerQueue.getQueue().size(), NUMBER_OF_PLAYERS);
                     } else {
                         sleep(200);
                         continue;
