@@ -16,6 +16,7 @@ import ru.atom.gameController.GameController;
 import ru.atom.other.Leaderboard;
 import ru.atom.other.Player;
 import ru.atom.other.PlayerQueue;
+import ru.atom.other.Selector;
 
 import java.util.TimerTask;
 
@@ -24,33 +25,34 @@ import java.util.TimerTask;
 public class MatchMakerController {
     private static final Logger log = LoggerFactory.getLogger(MatchMakerController.class);
 
-    private static int NUMBER_OF_PLAYERS = 4;
-
-    java.util.Timer checkPlayers = new java.util.Timer().schedule(
-            new TimerTask() {
-                public void run() {
-                    if (PlayerQueue.getQueue().size() > 0) {
-                        GameController.create()
-                    }
-                }
-            },5000);
-
+    private Selector selector = new Selector();
 
     @RequestMapping(
             path = "join",
             method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> join(@RequestParam("name") String name) {
-
-        name = HtmlUtils.htmlEscape(name);
-        if (!Leaderboard.getStat().containsKey(name)) {
-            Leaderboard.getStat().put(name, 0);
+    public ResponseEntity<String> join(@RequestParam("name") String name) throws InterruptedException {
+        if (!selector.isAlive()) {
+            selector.start();
+            selector.setDaemon(true);
         }
 
-        PlayerQueue.getQueue().offer(new Player(name));
+        name = HtmlUtils.htmlEscape(name);
+        int rank = 0;
+        if (!Leaderboard.getStat().containsKey(name)) {
+            Leaderboard.getStat().put(name, 0);
+        } else {
+            rank = Leaderboard.getStat().get(name);
+        }
 
+        Player player = new Player(name, rank);
 
-        return ResponseEntity.ok().build();
+        player.start();
+        PlayerQueue.getQueue().offer(player);
+        player.join();
+        String responseBody = Long.toString(player.gameId);
+        return ResponseEntity.ok(responseBody);
     }
 }
