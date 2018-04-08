@@ -3,133 +3,47 @@
 </head>
 <html>
 <body>
-<div id="header">
-    <form method="POST" id="nameform" action="javascript:void(null);" onsubmit="login()">
-        <input id="name" name="name" value="" style="font-size:medium" type="text">
-        <input value="Login" style="font-size:large" type="submit">
-    </form>
-    <form method="POST" id="passform" action="javascript:void(null);">
-        <input id="pass" name="pass" value="" style="font-size:medium" type="text">
+<div class="play_div"></div>
+<div id="form_div">
+    <form method="POST" id="nameform" action="javascript:void(null);" onsubmit="play()">
+        <label>Your name<input id="name" name="name" value="" style="font-size:medium" type="text"></label>
+        <button class="play_btn btn" style="font-size:large" type="submit">Play</button>
     </form>
 </div>
-
-<div id="header1">
-    <form method="POST" id="nameform" action="javascript:void(null);" onsubmit="logout()">
-        <input value="Logout" style="font-size:large" type="submit">
-    </form>
+<div id="connection_info_div">
+    jnm
 </div>
-
-<div id="online">
-    <div id="users" class="chat form"></div>
-</div>
-
-<div id="body">
-    <div id="history" class="chat form"></div>
-</div>
-
-<div id="footer">
-    <form method="POST" id="msgform" action="javascript:void(null);" onsubmit="say()">
-        <input id="msg" name="msg" class="msginput" value="" style="font-size:medium" type="text">
-        <input value="Send" class="sendbutton" style="font-size:large" type="submit">
-    </form>
-</div>
-</body>
-</html>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
     var host = "localhost";
     var port = 8080;
-    var curName = "admin";
+    var innerHtml ='<div id="nameform">' +
+        '<span>Your GameSessionId:</span><br>' +
+        '<span id="id"></span>' +
+        '<button class="connect_btn btn" type="submit" >Connect</button></div>';
 
-    function loadHistory() {
-        var settings = {
-            "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/chat",
-            "method": "GET",
-        }
-
-        $.ajax(settings).done(function (response) {
-            $("#history").html(response.replace(/\n/g, "<br />"))
-            $("#history").scrollTop($("#history")[0].scrollHeight);
-        }).fail(function (jqXHR, textStatus) {
-            console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-        });
-    }
-
-    function loadUsers() {
-        var settings = {
-            "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/online",
-            "method": "GET",
-        }
-
-        $.ajax(settings).done(function (response) {
-            $("#users").html(response.replace(/\n/g, "<br />"))
-            $("#users").scrollTop($("#users")[0].scrollHeight);
-        }).fail(function (jqXHR, textStatus) {
-            console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-        });
-    }
-
-    function say() {
-        var msg = $('#msgform').serialize();
-
-        var settings = {
-            "method": "POST",
-            "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/say",
-            "data": curName + "&" + msg
-        };
-
-        $.ajax(settings).done(function (response) {
-            $('#msgform').trigger("reset");
-            loadHistory();
-            loadUsers();
-        }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-            console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-        });
-    }
-
-    function login() {
+    function play(){
         var name = $('#nameform').serialize();
-        var pass = $('#passform').serialize();
-        curName = name;
         var settings = {
-            "method": "POST",
             "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/login",
-            "data": name + "&" + pass
-        };
+            "url": "http://" + host + ":" + port + "/matchmaker/join",
+            "method": "POST",
+            "data":name
+        }
 
+        document.getElementById("connection_info_div").innerHTML = '<span>Waiting for another players<span>';
+        document.getElementById("connection_info_div").visibility = "hidden";
         $.ajax(settings).done(function (response) {
-            loadHistory();
-            loadUsers();
+            $('#connection_info_div').html("");
+            $('.play_div').html(innerHtml);
+            $('#id').html(response);
         }).fail(function (jqXHR, textStatus) {
+            $('#connection_info_div').html("");
             alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
             console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
         });
     }
 
-    function logout() {
-        var settings = {
-            "method": "POST",
-            "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/logout",
-            "data": curName
-        };
-
-        $.ajax(settings).done(function (response) {
-            loadHistory();
-            loadUsers();
-        }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-            console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-        });
-    }
-
-    loadHistory();
-    loadUsers();
-    setInterval(loadHistory, 10000);
 </script>
+</body>
+</html>
