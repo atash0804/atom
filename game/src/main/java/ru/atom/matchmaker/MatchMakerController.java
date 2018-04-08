@@ -1,5 +1,9 @@
 package ru.atom.matchmaker;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,11 +20,16 @@ import ru.atom.other.Player;
 import ru.atom.other.PlayerQueue;
 import ru.atom.other.Selector;
 
+import java.io.IOException;
+
 @Controller
 @RequestMapping("matchmaker")
 public class MatchMakerController {
     private static final Logger log = LoggerFactory.getLogger(MatchMakerController.class);
-
+    private static final OkHttpClient client = new OkHttpClient();
+    private static final String PROTOCOL = "http://";
+    private static final String HOST = "localhost";
+    private static final String PORT = ":8080";
     private Selector selector = new Selector();
 
     @RequestMapping(
@@ -50,5 +59,36 @@ public class MatchMakerController {
         player.join();
         String responseBody = Long.toString(player.gameId);
         return ResponseEntity.ok(responseBody);
+    }
+    //TODO
+    //сюда надо передать число игроков в игре, обратно возвращается gameID, далее в игру с этим ID должны добавиться игроки
+    //возможно(и скорее всего) это надо делать в методе join
+    private long create() throws IOException {
+        okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
+        Request request = new Request.Builder()
+                .post(RequestBody.create(mediaType, "playerCount=" + numberOfPlayers))
+                .url(PROTOCOL + HOST + PORT + "/game/create")
+                .build();
+        Response response = client.newCall(request).execute();
+        return  Long.parseLong(response.body().string());
+    }
+
+    private void connect(long gameId,String name) throws IOException{
+        okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
+        Request request = new Request.Builder()
+                .post(RequestBody.create(mediaType,
+                        "gameId=" + gameId + "&name=" + name))
+                .url(PROTOCOL + HOST + PORT + "/game/connect")
+                .build();
+        client.newCall(request).execute();
+    }
+
+    private void start(long gameId) throws IOException{
+        okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
+        Request request = new Request.Builder()
+                .post(RequestBody.create(mediaType, "gameId=" + gameId))
+                .url(PROTOCOL + HOST + PORT + "/game/start")
+                .build();
+        client.newCall(request).execute();
     }
 }
