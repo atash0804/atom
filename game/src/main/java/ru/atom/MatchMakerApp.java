@@ -1,4 +1,4 @@
-package ru.atom.matchmaker;
+package ru.atom;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

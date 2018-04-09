@@ -22,6 +22,8 @@ import ru.atom.other.Selector;
 
 import java.io.IOException;
 
+import static java.lang.Thread.sleep;
+
 @Controller
 @RequestMapping("matchmaker")
 public class MatchMakerController {
@@ -39,9 +41,10 @@ public class MatchMakerController {
             produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> join(@RequestParam("name") String name) throws InterruptedException {
-        if (!selector.isAlive()) {
+        try {
             selector.start();
-            selector.setDaemon(true);
+        } catch (java.lang.IllegalThreadStateException e) {
+
         }
 
         name = HtmlUtils.htmlEscape(name);
@@ -53,11 +56,17 @@ public class MatchMakerController {
         }
 
         Player player = new Player(name, rank);
+        player.location = Thread.currentThread();
 
-        player.start();
         PlayerQueue.getQueue().offer(player);
-        player.join();
-        String responseBody = Long.toString(player.gameId);
+        try {
+            sleep(100000);
+        } catch (InterruptedException e) {
+            log.info("Provided player " + name + " with GameId ", player.gameId);
+            String responseBody = Long.toString(player.gameId);
+            return ResponseEntity.ok(responseBody);
+        }
+        String responseBody = Long.toString(0);
         return ResponseEntity.ok(responseBody);
     }
     //TODO
@@ -65,6 +74,7 @@ public class MatchMakerController {
     //возможно(и скорее всего) это надо делать в методе join
     private long create() throws IOException {
         okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
+        int numberOfPlayers = 4;
         Request request = new Request.Builder()
                 .post(RequestBody.create(mediaType, "playerCount=" + numberOfPlayers))
                 .url(PROTOCOL + HOST + PORT + "/game/create")

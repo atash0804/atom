@@ -13,8 +13,7 @@ public class Selector extends Thread {
         try {
             while (true) {
                 Date curTime = new Date();
-                int players;
-
+                int players = 0;
                 if (PlayerQueue.getQueue().size() > MAX_PLAYERS) {
                     players = NUMBER_OF_PLAYERS;
                 } else {
@@ -25,12 +24,11 @@ public class Selector extends Thread {
                         continue;
                     }
                 }
-
                 long id = GameController.create(players);
                 Player chosenPlayer = PlayerQueue.getQueue().poll();
                 int rank = chosenPlayer.getRank();
                 chosenPlayer.gameId = id;
-                chosenPlayer.interrupt();
+                chosenPlayer.location.interrupt();
 
                 for (int i = 1; i < players; i++) {
                     chosenPlayer = PlayerQueue.getQueue().peek();
@@ -50,7 +48,7 @@ public class Selector extends Thread {
 
                     PlayerQueue.getQueue().remove(chosenPlayer);
                     chosenPlayer.gameId = id;
-                    chosenPlayer.interrupt();
+                    chosenPlayer.location.interrupt();
                 }
             }
         } catch (Exception e) {

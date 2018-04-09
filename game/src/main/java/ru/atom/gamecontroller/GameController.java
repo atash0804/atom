@@ -1,11 +1,12 @@
 package ru.atom.gamecontroller;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 public class GameController {
     private static int MAX_GAMES = 1000;
 
     public static long create(int playerCount) {
-        return ThreadLocalRandom.current().nextLong(1, MAX_GAMES);
+        Random random = new Random();
+        return random.nextInt(MAX_GAMES);
     }
 }
