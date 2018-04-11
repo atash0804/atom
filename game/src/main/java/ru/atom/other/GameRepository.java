@@ -1,5 +1,6 @@
 package ru.atom.other;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
