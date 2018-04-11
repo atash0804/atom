@@ -66,7 +66,7 @@ public class MatchMakerController {
     private long create() throws IOException {
         okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
         Request request = new Request.Builder()
-                .post(RequestBody.create(mediaType, "playerCount=" + numberOfPlayers))
+                .post(RequestBody.create(mediaType, "playerCount=" + 4))
                 .url(PROTOCOL + HOST + PORT + "/game/create")
                 .build();
         Response response = client.newCall(request).execute();

@@ -28,8 +28,7 @@ public class GameService {
 
     @RequestMapping(
             path = "create",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            method = RequestMethod.GET)
     public ResponseEntity<String> create(@RequestParam("playerCount") int playerCount) {
         GameSession gameSession= new GameSession(playerCount);
         gameRepository.put(gameSession);

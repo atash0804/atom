@@ -12,7 +12,7 @@ public class GameSession {
 
     private static AtomicLong idGenerator = new AtomicLong();
     private int playersInGame = 4;
-    private ArrayList<Player> players;
+    private ArrayList<Player> players = new ArrayList<>();
     private final long id = idGenerator.getAndIncrement();
 
     public GameSession(int playersInGame){
@@ -53,5 +53,9 @@ public class GameSession {
 
     public long getId() {
         return id;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
     }
 }
