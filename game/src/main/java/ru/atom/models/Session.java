@@ -12,12 +12,7 @@ public class Session {
         return playerCount;
     }
 
-    public void setPlayerCount(int playerCount) {
-        this.playerCount = playerCount;
-    }
-
-    public Session(int id, int playerCount)
-    {
+    public Session(int id, int playerCount) {
         this.id = id;
         this.playerCount = playerCount;
     }
@@ -30,8 +25,7 @@ public class Session {
         this.id = id;
     }
 
-    public boolean isFull()
-    {
+    public boolean isFull() {
         return players.size() >= playerCount;
     }
 
@@ -43,8 +37,14 @@ public class Session {
         this.players = players;
     }
 
-    public void addPlayer(Player player)
-    {
+    public void addPlayer(Player player) {
         players.add(player);
+    }
+
+    public double getAverageRating() {
+        double rating = 0;
+        for (Player player : players)
+            rating += player.getRating();
+        return rating / players.size();
     }
 }

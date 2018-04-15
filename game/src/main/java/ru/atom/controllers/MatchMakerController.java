@@ -38,8 +38,7 @@ public class MatchMakerController {
     private SessionRepository sessionRepository;
 
     @Autowired
-    public MatchMakerController(PlayersRepository playersRepository, SessionRepository sessionRepository)
-    {
+    public MatchMakerController(PlayersRepository playersRepository, SessionRepository sessionRepository) {
         this.playersRepository = playersRepository;
         this.sessionRepository = sessionRepository;
     }
@@ -47,7 +46,6 @@ public class MatchMakerController {
     @RequestMapping(
             path = "join",
             method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> join(@RequestParam("name") String name) throws IOException {
@@ -55,28 +53,35 @@ public class MatchMakerController {
         Player player = playersRepository.get(name);
         if (player == null) {
             log.info("Player not found. Creating!");
-            player = new Player(name);
+            player = new Player(name, 0);
         }
         BlockingQueue<Session> sessions = sessionRepository.getSessions();
-        log.info("Tryin' to find valid session(not full for now)");
-        for (Session session : sessions) {
-            if (!session.isFull()) {
-                log.info("Found valid session {}", session.getId());
-                session.addPlayer(player);
-                if (session.isFull())
-                {
-                    log.info("Session is full. Start the game");
-                    start(session.getId());
+        log.info("Tryin' to find valid session(with rating). It uses manhattan distance");
+        double threshold = 0;
+        do {
+            for (Session session : sessions) {
+                if (!session.isFull()) {
+                    double rating = Math.abs(session.getAverageRating() - player.getRating());
+                    if (rating <= threshold) {
+                        log.info("Found valid session {}", session.getId());
+                        session.addPlayer(player);
+                        if (session.isFull()) {
+                            log.info("Session is full. Start the game");
+                            start(session.getId());
+                            return new ResponseEntity<>(String.valueOf(session.getId()), HttpStatus.OK);
+                        }
+                    }
                 }
-                return new ResponseEntity<>(String.valueOf(session.getId()), HttpStatus.OK);
             }
-        }
+            threshold++;
+        } while (threshold != 10);
+
         log.info("Couldn't find valid session, so we're creating one!");
         Session session = sessionRepository.get(create());
         session.addPlayer(player);
         return new ResponseEntity<>(String.valueOf(session.getId()), HttpStatus.OK);
     }
-
+    
     //TODO
     //сюда надо передать число игроков в игре, обратно возвращается gameID, далее в игру с этим ID должны добавиться игроки
     //возможно(и скорее всего) это надо делать в методе join
@@ -90,7 +95,7 @@ public class MatchMakerController {
         return Integer.valueOf(response.body().string());
     }
 
-    private void connect(int gameId,String name) throws IOException{
+    private void connect(int gameId, String name) throws IOException {
         okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
         Request request = new Request.Builder()
                 .post(RequestBody.create(mediaType,
@@ -100,7 +105,7 @@ public class MatchMakerController {
         client.newCall(request).execute();
     }
 
-    private void start(int gameId) throws IOException{
+    private void start(int gameId) throws IOException {
         okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
         Request request = new Request.Builder()
                 .post(RequestBody.create(mediaType, "gameId=" + gameId))

@@ -2,9 +2,12 @@ package ru.atom;
 
 import org.junit.Assert;
 import org.junit.Test;
-import ru.atom.matchmaker.GameService;
-import ru.atom.other.GameSession;
-import ru.atom.other.Player;
+import ru.atom.models.Player;
+import ru.atom.models.Session;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -14,14 +17,13 @@ public class GameTests {
     @Test
     public void testGameSessionAddPlayer()
     {
-        GameSession gameSession = new GameSession(1);
-        Player player = new Player("Kolya", 2);
-        Player player2 = new Player("Sonya", 3);
-        Assert.assertTrue(gameSession.addPlayer(player));
-        assertEquals(1, gameSession.getPlayersInGame());
-        assertEquals(1, gameSession.getPlayers().size());
-
-        Assert.assertFalse(gameSession.addPlayer(player2));
-        assertEquals(2, gameSession.getRank(), 0);
+        String[] names = {"Kolya", "Sonya", "Masha", "Dima"};
+        Session gameSession = new Session(1, 4);
+        List<Player> playerList = new ArrayList<>();
+        for (String name : names)
+            playerList.add(new Player(name));
+        gameSession.setPlayers(playerList);
+        assertTrue(gameSession.isFull());
+        assertEquals(4, gameSession.getPlayers().size());
     }
 }

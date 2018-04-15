@@ -35,8 +35,7 @@ public class GameServiceController {
 
     @RequestMapping(
             path = "create",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            method = RequestMethod.POST)
     public ResponseEntity<String> create(@RequestParam("playerCount") int playerCount) {
         log.info("Creating game with playerCount = {}", playerCount);
         Session session = new Session(gameId.getAndIncrement(), playerCount);
