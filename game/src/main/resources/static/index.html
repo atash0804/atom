@@ -17,8 +17,8 @@
     var host = "localhost";
     var port = 8080;
     var innerHtml ='<div id="nameform">' +
-        '<span>Your GameSessionId:</span><br>' +
-        '<span id="id"></span>' +
+        '<span>Your GameSessionId:</span>' +
+        '<span id="id"></span><br/>' +
         '<button class="connect_btn btn" type="submit" >Connect</button></div>';
 
     function play(){
@@ -28,13 +28,13 @@
             "url": "http://" + host + ":" + port + "/matchmaker/join",
             "method": "POST",
             "data":name
-        }
+        };
 
         document.getElementById("connection_info_div").innerHTML = '<span>Waiting for another players<span>';
-        document.getElementById("connection_info_div").visibility = "hidden";
+        //document.getElementById("connection_info_div").visibility = "hidden";
         $.ajax(settings).done(function (response) {
             $('#connection_info_div').html("");
-            $('.form_div').html(innerHtml);
+            $('#form_div').html(innerHtml);
             $('#id').html(response);
         }).fail(function (jqXHR, textStatus) {
             $('#connection_info_div').html("");

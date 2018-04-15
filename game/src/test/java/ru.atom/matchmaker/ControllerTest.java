@@ -1,6 +1,7 @@
 package ru.atom.matchmaker;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import ru.atom.controllers.MatchMakerController;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -21,12 +23,12 @@ import org.springframework.web.context.WebApplicationContext;
 public class ControllerTest {
 
     @Autowired
-    GameService gameService;
+    MatchMakerController matchMakerController;
 
     @Test
     public void contextLoad()
     {
-        assertThat(gameService).isNotNull();
+        assertThat(matchMakerController).isNotNull();
     }
 
     @Autowired
@@ -37,7 +39,7 @@ public class ControllerTest {
     public void TestController() throws Exception
     {
         mockMvc.perform(
-                get("/game/create/").param("playerCount", "3"))
+                post("/game/create/").param("playerCount", "4"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
