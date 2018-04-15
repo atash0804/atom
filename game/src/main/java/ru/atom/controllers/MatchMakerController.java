@@ -55,6 +55,7 @@ public class MatchMakerController {
             log.info("Player not found. Creating!");
             player = new Player(name, 0);
         }
+        playersRepository.add(player);
         BlockingQueue<Session> sessions = sessionRepository.getSessions();
         log.info("Tryin' to find valid session(with rating). It uses manhattan distance");
         double threshold = 0;
@@ -81,7 +82,7 @@ public class MatchMakerController {
         session.addPlayer(player);
         return new ResponseEntity<>(String.valueOf(session.getId()), HttpStatus.OK);
     }
-    
+
     //TODO
     //сюда надо передать число игроков в игре, обратно возвращается gameID, далее в игру с этим ID должны добавиться игроки
     //возможно(и скорее всего) это надо делать в методе join

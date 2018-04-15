@@ -8,6 +8,16 @@ public class Session {
     private int playerCount;
     private List<Player> players = new ArrayList<>();
 
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
+    }
+
+    private boolean isFinished = false;
+
     public int getPlayerCount() {
         return playerCount;
     }

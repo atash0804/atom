@@ -9,7 +9,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @Repository
 public class PlayersRepository {
-    private static BlockingQueue<Player> players = new LinkedBlockingQueue<>();
+    private BlockingQueue<Player> players = new LinkedBlockingQueue<>();
+
+    public BlockingQueue<Player> getPlayers() {
+        return players;
+    }
 
     public void add(Player player) {
         players.add(player);
